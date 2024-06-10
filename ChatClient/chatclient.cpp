@@ -10,6 +10,15 @@ ChatClient::ChatClient(QWidget *parent)
     ui->progressBar->setValue(0);
     m_downloadPath = QCoreApplication::applicationDirPath() + "/../下载";
     isDownloading = false;
+    is_videoShow=false;
+    udpSocket = new QUdpSocket(this);
+    ClientudpSocket = new QUdpSocket(this);
+    videoShow = new QWidget();
+    videoShow->setWindowTitle("Client");
+    if (!ClientudpSocket->bind(QHostAddress::Any,7777)) {
+        qDebug() << "error:Client failed to bind to port!";
+        return;
+    }else qDebug()<<"Client video bind succeed!";
     QDir dir;
     if(!dir.exists(m_downloadPath)) {
         dir.mkdir(m_downloadPath);
@@ -86,6 +95,39 @@ void ChatClient::connectToServer()
     });
     connect(socket, &QTcpSocket::disconnected, this, [=]() {
         qDebug()<<(QString("与服务器断开连接：原因：%1").arg(socket->errorString()));
+    });
+    connect(ClientudpSocket, &QUdpSocket::readyRead, this, [=]() {
+        while (ClientudpSocket->hasPendingDatagrams()) {
+            QByteArray datagram;
+            datagram.resize(ClientudpSocket->pendingDatagramSize());
+            ClientudpSocket->readDatagram(datagram.data(), datagram.size());
+            if(datagram=="Commopasd"||datagram==""){
+                if(datagram=="Commopasd"){
+                    label.clear();
+                    videoShow->hide();
+                }
+                is_videoShow=false;
+                return;
+            }
+            QImage image;
+            image.loadFromData(datagram, "JPEG");
+            QPixmap receivedPixmap;
+            receivedPixmap = QPixmap::fromImage(image.rgbSwapped());
+
+            label.setPixmap(receivedPixmap);
+             // 处理接收到的QPixmap，例如显示在界面上或保存到文件中
+        }//
+        label.setScaledContents(true);
+        QVBoxLayout layout;
+        layout.addWidget(&label);
+        label.resize(QSize(800,600));
+        videoShow->resize(QSize(800,600));
+        videoShow->setLayout(&layout);
+        if(!is_videoShow){
+            videoShow->show();
+        }
+        is_videoShow=true;
+
     });
 }
 
@@ -381,4 +423,54 @@ void ChatClient::resizeEvent(QResizeEvent *event)
         if(!is_images)dealMessage(messageW, item, messageW->text(), messageW->time(), messageW->userType());
         else dealimage(messageW, item, messageW->text(), messageW->time(), messageW->userType());
     }
+}
+
+void ChatClient::on_pushButton_4_clicked()
+{
+    capture = new cv::VideoCapture();
+    // 尝试打开默认摄像头（索引为0）
+    if (!capture->open(0)) {
+        qDebug() << "Error opening video capture";
+        return;
+    }
+
+    // 设置定时器以定期从摄像头捕获帧
+    QTimer *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, [=](){
+        cv::Mat frame;
+        *capture >> frame; // 从摄像头捕获帧
+
+        QImage qtImage;
+        if (!frame.empty()) {
+            cvtColor(frame, frame, cv::COLOR_BGR2RGB); // 转换为RGB
+            qtImage = QImage((const unsigned char*)(frame.data), frame.cols, frame.rows, frame.step, QImage::Format_RGB888);
+            qtImage = QImage(frame.data, frame.cols, frame.rows, frame.step, QImage::Format_RGB888).rgbSwapped();
+        }
+        QPixmap pixmap = QPixmap::fromImage(qtImage.rgbSwapped());
+        label2.clear();
+        label2.setPixmap(pixmap); // OpenCV使用BGR，而Qt使用RGB
+        // 将QPixmap转换为字节数组
+        QBuffer buffer;
+        buffer.open(QIODevice::WriteOnly);
+        qtImage.save(&buffer, "JPEG");
+
+        // 发送QPixmap数据到服务端
+        udpSocket->writeDatagram(buffer.data(), buffer.size(), QHostAddress("192.168.12.129"), 7755);
+
+    });
+    label2.setScaledContents(true);
+    QVBoxLayout layout;
+    layout.addWidget(&label2);
+    label2.resize(QSize(800,600));
+    videoShow->setLayout(&layout);
+    videoShow->resize(QSize(800,600));
+    videoShow->show();
+    timer->start(30); // 每30毫秒捕获一次帧
+}
+
+void ChatClient::on_pushButton_5_clicked()
+{
+    udpSocket->writeDatagram("Commopasd", QHostAddress("192.168.12.129"),7755);
+    capture->release();
+    videoShow->hide();
 }

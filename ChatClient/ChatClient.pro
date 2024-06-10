@@ -29,6 +29,12 @@ HEADERS += \
 FORMS += \
     chatclient.ui
 
+LIBS += /usr/local/lib64/libopencv*
+
+INCLUDEPATH += /usr/local/include \
+                /usr/local/include/opencv4 \
+                /usr/local/include/opencv4/opencv2
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

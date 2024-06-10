@@ -13,13 +13,17 @@
 #include <QJsonObject>
 #include <QVariantMap>
 #include <QListWidgetItem>
-#include <QPixmap>
-#include <openssl/aes.h>
-#include <openssl/rand.h>
-#include <openssl/evp.h>
 #include <QDir>
 #include <QMessageBox>
 #include <QDesktopServices>
+#include <QPixmap>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QTimer>
+#include <QBuffer>
+#include <QUdpSocket>
 
 #include "chatmessage/qnchatmessage.h"
 #include "myfileinfo.h"
@@ -61,6 +65,11 @@ protected:
     QPair<QString,qint64> getFileContent(QString filePath);
     void ToServerFileData(QTcpSocket *socket);
 
+private slots:
+    void on_pushButton_4_clicked();
+
+    void on_pushButton_5_clicked();
+
 private:
     MyFileInfo* myFile;
     QString m_downloadPath;//下载路径
@@ -76,5 +85,15 @@ private:
     qint64 m_fileInfoWriteBytes;
     QString m_sendFilePath;
     QFile m_localFile;
+private:
+    /*video*/
+    QUdpSocket *udpSocket;
+    QUdpSocket *ClientudpSocket;
+    int is_videoShow;
+    QWidget *videoShow;
+    cv::VideoCapture *capture;
+    QPixmap pixmap;
+    QLabel label;
+    QLabel label2;
 };
 #endif // CHATCLIENT_H

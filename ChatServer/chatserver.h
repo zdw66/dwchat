@@ -15,11 +15,15 @@
 #include "chatmessage/qnchatmessage.h"
 #include "myfileinfo.h"
 #include <QListWidgetItem>
-#include <QPixmap>
 #include <QDesktopServices>
-#include <openssl/aes.h>
-#include <openssl/rand.h>
-#include <openssl/evp.h>
+#include <QPixmap>
+#include <opencv2/opencv.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <QVBoxLayout>
+#include <QLabel>
+#include <QTimer>
+#include <QBuffer>
+#include <QUdpSocket>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ChatServer; }
@@ -61,6 +65,10 @@ private slots:
 
     void on_pushButton_clicked();
 
+    void on_pushButton_4_clicked();
+
+    void on_pushButton_5_clicked();
+
 private:
     /*Server*/
     QTcpServer *server;
@@ -79,5 +87,15 @@ private:
     bool isDownloading;
     MyFileInfo* myFile;
     QString m_downloadPath;//下载路径
+
+private:
+    QUdpSocket *udpSocket;
+    QUdpSocket *ServerudpSocket;
+    cv::VideoCapture *capture;
+    QWidget *videoShow;
+    QLabel label;
+    QLabel label2;
+    bool is_videoShow;
+    QPixmap pixmap;
 };
 #endif // CHATSERVER_H

@@ -9,13 +9,15 @@
 #include <QMovie>
 #include <QLabel>
 #include <QDebug>
+#include <QPushButton>
+#include "fileview.h"
 
 class QPaintEvent;
 class QPainter;
 class QLabel;
 class QMovie;
 
-class QNChatMessage : public QWidget
+class QNChatMessage : public QPushButton
 {
     Q_OBJECT
 public:
@@ -65,6 +67,9 @@ private:
     QMovie* m_loadingMovie = Q_NULLPTR;
     bool m_isSending = false;
     bool is_image = false;
+    FileView fileView;
+public:
+    QString fileSize;
 };
 
 #endif // QNCHATMESSAGE_H

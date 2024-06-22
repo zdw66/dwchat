@@ -17,6 +17,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     chatmessage/qnchatmessage.cpp \
+    fileview.cpp \
     main.cpp \
     chatclient.cpp \
     myfileinfo.cpp
@@ -24,10 +25,12 @@ SOURCES += \
 HEADERS += \
     chatclient.h \
     chatmessage/qnchatmessage.h \
+    fileview.h \
     myfileinfo.h
 
 FORMS += \
-    chatclient.ui
+    chatclient.ui \
+    fileview.ui
 
 LIBS += /usr/local/lib64/libopencv*
 

@@ -1,7 +1,7 @@
 #include "qnchatmessage.h"
 
 
-QNChatMessage::QNChatMessage(QWidget *parent) : QWidget(parent)
+QNChatMessage::QNChatMessage(QWidget *parent) : QPushButton(parent)
 {
     QFont te_font = this->font();
     te_font.setFamily("MicrosoftYaHei");
@@ -69,8 +69,14 @@ QSize QNChatMessage::fontRect(QString str,bool is_images)
     m_iconRightRect = QRect(this->width() - iconSpaceW - iconWH, iconTMPH, iconWH, iconWH);
 
     QSize size = getRealString(m_msg); // 整个的size
-    if(is_images)size=QSize(366, 229);
-
+    if(is_images){
+        size=QSize(366, 229);
+        if(!m_msg.endsWith(".jpg")
+         &&!m_msg.endsWith(".png")
+         &&!m_msg.endsWith(".gif")){
+            size=QSize(430,140);
+        }
+    }
 //    qDebug() << "fontRect Size:" << size;
     int hei = size.height() < minHei ? minHei : size.height();
 
@@ -184,12 +190,20 @@ void QNChatMessage::paintEvent(QPaintEvent *event)
         QTextOption option(Qt::AlignLeft | Qt::AlignVCenter);
         option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
         painter.setFont(this->font());
+
         if(!is_image)painter.drawText(m_textLeftRect, m_msg,option);
         else{
-//            painter.drawText(m_textRightRect, m_msg,option);
-            QImage image(m_msg);
-            painter.drawImage(m_textLeftRect,image);
+            if(!m_msg.endsWith(".jpg")
+             &&!m_msg.endsWith(".png")
+             &&!m_msg.endsWith(".gif")){
+                fileView.setView(m_msg.right(m_msg.size()-m_msg.lastIndexOf('/')-1),fileSize);
+                painter.drawImage(m_textLeftRect,fileView.grab().toImage());
+            }else{
+                QImage image(m_msg);
+                painter.drawImage(m_textLeftRect,image);
+            }
         }
+
     }  else if(m_userType == User_Type::User_Me) { // 自己
         //头像
 //        painter.drawRoundedRect(m_iconRightRect,m_iconRightRect.width(),m_iconRightRect.height());
@@ -217,13 +231,21 @@ void QNChatMessage::paintEvent(QPaintEvent *event)
         painter.setPen(penText);
         QTextOption option(Qt::AlignRight | Qt::AlignVCenter);
         option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-        if(!is_image){
-            painter.setFont(this->font());
-            painter.drawText(m_textRightRect, m_msg,option);
-        }else{
-            QImage image(m_msg);
-            painter.drawImage(m_textRightRect,image);
+
+        if(!is_image)painter.drawText(m_textRightRect, m_msg,option);
+        else{
+            if(!m_msg.endsWith(".jpg")
+             &&!m_msg.endsWith(".png")
+             &&!m_msg.endsWith(".gif")){
+                fileView.setView(m_msg.right(m_msg.size()-m_msg.lastIndexOf('/')-1),fileSize);
+                painter.drawImage(m_textRightRect,fileView.grab().toImage());
+            }else{
+
+                QImage image(m_msg);
+                painter.drawImage(m_textRightRect,image);
+            }
         }
+
     }  else if(m_userType == User_Type::User_Time) { // 时间
         QPen penText;
         penText.setColor(QColor(153,153,153));

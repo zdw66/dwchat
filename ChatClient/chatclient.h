@@ -95,5 +95,10 @@ private:
     QPixmap pixmap;
     QLabel label;
     QLabel label2;
+    /*file view*/
+    QVector<QPair<QNChatMessage*,QString>>toServerFileViewList;
+    QVector<QPair<QNChatMessage*,QString>>getServerFileViewList;
+    QString toServerFileSize;
+    QString getServerFileSize;
 };
 #endif // CHATCLIENT_H

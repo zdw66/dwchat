@@ -62,7 +62,7 @@ void ChatClient::connectSigSlots()
         socket->write(data);
     });
     connect(ui->pushButton_2,&QPushButton::clicked,[=](){
-        ServerFilePath = QFileDialog::getOpenFileName(this, "选择文件", "/",("*.jpg *.png *.gif"));
+        ServerFilePath = QFileDialog::getOpenFileName(this, "选择文件", "/");
         if(ServerFilePath=="") return;
         QString time = QString::number(QDateTime::currentDateTime().toTime_t()); //时间戳
         QNChatMessage* messageW = new QNChatMessage(ui->listWidget->parentWidget());
@@ -77,11 +77,44 @@ void ChatClient::connectSigSlots()
         QFile file(ServerFilePath);
         QString msg;
         if(file.size()>1024*1024) {
-            msg = QString("大小：%1M").arg(file.size()/1024/1024.0);
+            toServerFileSize = QString("%1M").arg(file.size()/1024/1024.0);
         }
         else {
-            msg = QString("大小：%1KB").arg(file.size()/1024.0);
+            toServerFileSize = QString("%1KB").arg(file.size()/1024.0);
         }
+
+        toServerFileViewList.push_back({messageW,ServerFilePath});
+        auto i = toServerFileViewList[toServerFileViewList.size()-1];
+        i.first->fileSize=toServerFileSize;
+
+        connect(i.first,&QNChatMessage::clicked,[=](){
+            if(!i.second.endsWith(".jpg")
+             &&!i.second.endsWith(".png")
+             &&!i.second.endsWith(".gif")){
+                if(!i.second.endsWith(".zip")
+                 &&!i.second.endsWith(".rar")
+                 &&!i.second.endsWith(".tar.gz")){
+                    // 读取文件内容
+                    QFile file(i.second);
+                    file.open(QIODevice::ReadOnly | QIODevice::Text);
+                    QTextStream in(&file);
+                    QString fileContent = in.readAll();
+                    QTextEdit *textEdit = new QTextEdit();
+                    textEdit->setText(fileContent);
+                    textEdit->resize(600,600);
+                    textEdit->setWindowTitle(i.second.right(i.second.size()-i.second.lastIndexOf('/')-1));
+                    textEdit->show();
+                }else{
+                    QString path = QCoreApplication::applicationDirPath()+"/../下载";
+                    QDesktopServices::openUrl(QUrl("file:"+path, QUrl::TolerantMode));
+                }
+            }
+        });
+
+        dealimage(i.first, item, ServerFilePath, time, QNChatMessage::User_Me);
+        i.first->setTextSuccess();
+        is_images=false;
+
         ToServerFileInfo(socket);
     });
 }
@@ -192,6 +225,13 @@ void ChatClient::fileInfoRead(QMap<QString, QVariant> map)
     qDebug()<<(QString("Client下载文件 %1, 文件大小：%2").arg(myFile->fileName).arg(myFile->fileSize));
     filePath = m_downloadPath + "/" + myFile->fileName;
     myFile->localFile.setFileName(filePath);
+    if(myFile->fileSize>1024*1024) {
+        getServerFileSize = QString("%1M").arg(myFile->fileSize/1024/1024.0);
+    }
+    else {
+        getServerFileSize = QString("%1KB").arg(myFile->fileSize/1024.0);
+    }
+
     // 打开文件，准备写入
     if(!myFile->localFile.open(QIODevice::WriteOnly)) {
         qDebug()<<"文件打开失败！";
@@ -236,15 +276,38 @@ void ChatClient::fileDataRead()
         isDownloading = false;
         myFile->initReadData();
         QString time = QString::number(QDateTime::currentDateTime().toTime_t()); //时间戳
-        QNChatMessage* messageW = new QNChatMessage(ui->listWidget->parentWidget());
+
+        getServerFileViewList.push_back({new QNChatMessage(ui->listWidget->parentWidget()),filePath});
+        getServerFileViewList.back().first->fileSize=getServerFileSize;
+        auto i = getServerFileViewList[getServerFileViewList.size()-1];
+        connect(i.first,&QNChatMessage::clicked,[=](){
+            if(!i.second.endsWith(".jpg")
+             &&!i.second.endsWith(".png")
+             &&!i.second.endsWith(".gif")){
+                if(!i.second.endsWith(".zip")
+                 &&!i.second.endsWith(".rar")
+                 &&!i.second.endsWith(".tar.gz")){
+                    // 读取文件内容
+                    QFile file(i.second);
+                    file.open(QIODevice::ReadOnly | QIODevice::Text);
+                    QTextStream in(&file);
+                    QString fileContent = in.readAll();
+                    QTextEdit *textEdit = new QTextEdit();
+                    textEdit->setText(fileContent);
+                    textEdit->resize(600,600);
+                    textEdit->setWindowTitle(i.second.right(i.second.size()-i.second.lastIndexOf('/')-1));
+                    textEdit->show();
+                }else{
+                    QString path = QCoreApplication::applicationDirPath()+"/../下载";
+                    QDesktopServices::openUrl(QUrl("file:"+path, QUrl::TolerantMode));
+                }
+            }
+        });
         QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
-        if(filePath.endsWith(".jpg")
-         ||filePath.endsWith(".png")
-         ||filePath.endsWith(".gif"))is_images=true;
-        else is_images=false;
-        if(!is_images)dealMessage(messageW, item, filePath.right(filePath.size()-filePath.lastIndexOf('/')-1), time, QNChatMessage::User_Me);
-        else dealimage(messageW, item, filePath, time, QNChatMessage::User_She);
-        messageW->setTextSuccess();
+        is_images=true;
+        dealimage(getServerFileViewList.back().first, item, filePath, time, QNChatMessage::User_She);
+        getServerFileViewList.back().first->setTextSuccess();
+        is_images=false;
     }
 
     if (myFile->bytesReceived > myFile->fileSize){

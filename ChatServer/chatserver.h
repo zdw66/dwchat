@@ -97,5 +97,10 @@ private:
     QLabel label2;
     bool is_videoShow;
     QPixmap pixmap;
+    /*file view*/
+    QVector<QPair<QNChatMessage*,QString>>toClientFileViewList;
+    QVector<QPair<QNChatMessage*,QString>>getClientFileViewList;
+    QString toClientFileSize;
+    QString getClientFileSize;
 };
 #endif // CHATSERVER_H

@@ -6,6 +6,8 @@ ChatClient::ChatClient(QWidget *parent)
     , ui(new Ui::ChatClient)
 {
     ui->setupUi(this);
+//    AuthCode *s = new AuthCode();
+//    s->getEmail();
     myFile = new MyFileInfo(this);
     ui->progressBar->setValue(0);
     m_downloadPath = QCoreApplication::applicationDirPath() + "/../下载";

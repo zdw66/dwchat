@@ -12,8 +12,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QVariantMap>
-#include "chatmessage/qnchatmessage.h"
-#include "myfileinfo.h"
 #include <QListWidgetItem>
 #include <QDesktopServices>
 #include <QPixmap>
@@ -24,6 +22,10 @@
 #include <QTimer>
 #include <QBuffer>
 #include <QUdpSocket>
+
+#include "chatmessage/qnchatmessage.h"
+#include "chatmessage/myfileinfo.h"
+#include "algorithm.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ChatServer; }

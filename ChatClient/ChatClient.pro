@@ -16,21 +16,14 @@ DEFINES += QT_DEPRECATED_WARNINGS
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    chatmessage/qnchatmessage.cpp \
-    fileview.cpp \
     main.cpp \
-    chatclient.cpp \
-    myfileinfo.cpp
+    chatclient.cpp
 
 HEADERS += \
-    chatclient.h \
-    chatmessage/qnchatmessage.h \
-    fileview.h \
-    myfileinfo.h
+    chatclient.h
 
 FORMS += \
-    chatclient.ui \
-    fileview.ui
+    chatclient.ui
 
 LIBS += /usr/local/lib64/libopencv*
 
@@ -45,3 +38,11 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 
 RESOURCES += \
     Resource.qrc
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../build-DWChat-Desktop_Qt_5_12_9_GCC_64bit-Debug/Algorithm/release/ -lAlgorithm
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-DWChat-Desktop_Qt_5_12_9_GCC_64bit-Debug/Algorithm/debug/ -lAlgorithm
+else:unix: LIBS += -L$$PWD/../../build-DWChat-Desktop_Qt_5_12_9_GCC_64bit-Debug/Algorithm/ -lAlgorithm
+
+INCLUDEPATH += $$PWD/../Algorithm
+INCLUDEPATH += $$PWD/../Algorithm/chatmessage
+DEPENDPATH += $$PWD/../Algorithm

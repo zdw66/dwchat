@@ -26,7 +26,9 @@
 #include <QUdpSocket>
 
 #include "chatmessage/qnchatmessage.h"
-#include "myfileinfo.h"
+#include "chatmessage/myfileinfo.h"
+#include "algorithm.h"
+#include "encipher.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ChatClient; }

@@ -24,11 +24,7 @@
 #include <QTimer>
 #include <QBuffer>
 #include <QUdpSocket>
-
-#include "chatmessage/qnchatmessage.h"
-#include "chatmessage/myfileinfo.h"
 #include "algorithm.h"
-#include "encipher.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class ChatClient; }
@@ -42,6 +38,7 @@ public:
     ChatClient(QWidget *parent = nullptr);
     ~ChatClient();
     QTcpSocket *socket;
+    Emijo *MyEmijo;
 
 private:
     Ui::ChatClient *ui;
@@ -71,6 +68,8 @@ private slots:
     void on_pushButton_4_clicked();
 
     void on_pushButton_5_clicked();
+
+    void on_pushButton_6_clicked();
 
 private:
     MyFileInfo* myFile;

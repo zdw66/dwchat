@@ -1,4 +1,4 @@
-QT       += core gui network multimedia multimediawidgets
+QT       += core gui network multimedia multimediawidgets sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -44,5 +44,5 @@ else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../build-DWChat-Desk
 else:unix: LIBS += -L$$PWD/../../build-DWChat-Desktop_Qt_5_12_9_GCC_64bit-Debug/Algorithm/ -lAlgorithm
 
 INCLUDEPATH += $$PWD/../Algorithm
-INCLUDEPATH += $$PWD/../Algorithm/chatmessage
+#INCLUDEPATH += $$PWD/../Algorithm/chatmessage
 DEPENDPATH += $$PWD/../Algorithm

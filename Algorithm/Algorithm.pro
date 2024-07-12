@@ -1,5 +1,4 @@
-QT += gui
-QT += network
+QT += gui network sql
 TEMPLATE = lib
 DEFINES += ALGORITHM_LIBRARY
 
@@ -19,19 +18,25 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 SOURCES += \
     algorithm.cpp \
+    archive.cpp \
+    auth.cpp \
     authcode.cpp \
     chatmessage/fileview.cpp \
     chatmessage/myfileinfo.cpp \
     chatmessage/qnchatmessage.cpp \
+    emijo.cpp \
     encipher.cpp
 
 HEADERS += \
     Algorithm_global.h \
     algorithm.h \
+    archive.h \
+    auth.h \
     authcode.h \
     chatmessage/fileview.h \
     chatmessage/myfileinfo.h \
     chatmessage/qnchatmessage.h \
+    emijo.h \
     encipher.h
 
 # Default rules for deployment.
@@ -41,6 +46,7 @@ unix {
 !isEmpty(target.path): INSTALLS += target
 
 FORMS += \
+    emijo.ui \
     fileview.ui
 
 DISTFILES += \

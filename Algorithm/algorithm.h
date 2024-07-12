@@ -3,7 +3,13 @@
 
 #include "Algorithm_global.h"
 #include "authcode.h"
-
+#include "auth.h"
+#include "encipher.h"
+#include "archive.h"
+#include "chatmessage/fileview.h"
+#include "chatmessage/myfileinfo.h"
+#include "chatmessage/qnchatmessage.h"
+#include "emijo.h"
 class ALGORITHM_EXPORT Algorithm
 {
 public:

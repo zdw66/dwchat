@@ -6,6 +6,7 @@ ChatServer::ChatServer(QWidget *parent)
     , ui(new Ui::ChatServer)
 {
     ui->setupUi(this);
+    MyEmijo = new Emijo();
     myFile = new MyFileInfo(this);
     ui->progressBar->setValue(0);
     m_downloadPath = QCoreApplication::applicationDirPath() + "/../下载";
@@ -398,6 +399,7 @@ void ChatServer::dealMessage(QNChatMessage *messageW, QListWidgetItem *item, QSt
     item->setSizeHint(size);
     messageW->setText(text, time, size, type,false);
     ui->listWidget->setItemWidget(item, messageW);
+    ui->listWidget->scrollToBottom();
 }
 void ChatServer::dealimage(QNChatMessage *messageW, QListWidgetItem *item, QString filePath, QString time,  QNChatMessage::User_Type type)
 {
@@ -407,6 +409,7 @@ void ChatServer::dealimage(QNChatMessage *messageW, QListWidgetItem *item, QStri
     item->setSizeHint(size);
     messageW->setText(filePath, time, size, type,true);
     ui->listWidget->setItemWidget(item, messageW);
+    ui->listWidget->scrollToBottom();
 }
 
 void ChatServer::dealMessageTime(QString curMsgTime)
@@ -534,4 +537,21 @@ void ChatServer::on_pushButton_5_clicked()
     ServerudpSocket->writeDatagram("Commopasd", QHostAddress("192.168.12.129"),7777);
     capture->release();
     videoShow->hide();
+}
+
+void ChatServer::on_pushButton_6_clicked()
+{
+    MyEmijo->show();
+    connect(MyEmijo,&Emijo::getEmijo,this,[=](QString emijo){
+        // 获取光标位置
+        QTextCursor cursor = ui->textEdit->textCursor();
+        // 将光标移动到文本末尾
+        cursor.movePosition(QTextCursor::End);
+        // 在光标位置插入新内容
+        cursor.insertText(emijo);
+        // 重新设置光标位置
+        ui->textEdit->setTextCursor(cursor);
+        MyEmijo->hide();
+        disconnect(MyEmijo,&Emijo::getEmijo,this,nullptr);
+    });
 }

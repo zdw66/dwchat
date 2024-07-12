@@ -22,9 +22,6 @@
 #include <QTimer>
 #include <QBuffer>
 #include <QUdpSocket>
-
-#include "chatmessage/qnchatmessage.h"
-#include "chatmessage/myfileinfo.h"
 #include "algorithm.h"
 
 QT_BEGIN_NAMESPACE
@@ -38,6 +35,7 @@ class ChatServer : public QWidget
 public:
     ChatServer(QWidget *parent = nullptr);
     ~ChatServer();
+    Emijo *MyEmijo;
 
 private:
     Ui::ChatServer *ui;
@@ -70,6 +68,8 @@ private slots:
     void on_pushButton_4_clicked();
 
     void on_pushButton_5_clicked();
+
+    void on_pushButton_6_clicked();
 
 private:
     /*Server*/

@@ -25,7 +25,8 @@ SOURCES += \
     chatmessage/myfileinfo.cpp \
     chatmessage/qnchatmessage.cpp \
     emijo.cpp \
-    encipher.cpp
+    encipher.cpp \
+    wxlogin.cpp
 
 HEADERS += \
     Algorithm_global.h \
@@ -37,7 +38,8 @@ HEADERS += \
     chatmessage/myfileinfo.h \
     chatmessage/qnchatmessage.h \
     emijo.h \
-    encipher.h
+    encipher.h \
+    wxlogin.h
 
 # Default rules for deployment.
 unix {

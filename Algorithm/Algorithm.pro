@@ -21,6 +21,7 @@ SOURCES += \
     archive.cpp \
     auth.cpp \
     authcode.cpp \
+    chatbot.cpp \
     chatmessage/fileview.cpp \
     chatmessage/myfileinfo.cpp \
     chatmessage/qnchatmessage.cpp \
@@ -34,6 +35,7 @@ HEADERS += \
     archive.h \
     auth.h \
     authcode.h \
+    chatbot.h \
     chatmessage/fileview.h \
     chatmessage/myfileinfo.h \
     chatmessage/qnchatmessage.h \
@@ -46,6 +48,10 @@ unix {
     target.path = /usr/lib
 }
 !isEmpty(target.path): INSTALLS += target
+
+# 添加 cmark 的库路径（如果必要）
+INCLUDEPATH += /usr/local/include  # 或者 cmark 的安装路径
+LIBS += -L/usr/local/lib64 -lcmark
 
 FORMS += \
     emijo.ui \

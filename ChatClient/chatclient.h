@@ -71,6 +71,8 @@ private slots:
 
     void on_pushButton_6_clicked();
 
+    void on_pushButton_7_clicked();
+
 private:
     MyFileInfo* myFile;
     QString m_downloadPath;//下载路径
@@ -101,5 +103,7 @@ private:
     QVector<QPair<QNChatMessage*,QString>>getServerFileViewList;
     QString toServerFileSize;
     QString getServerFileSize;
+    ChatBOT *chatbot;
+    bool check;
 };
 #endif // CHATCLIENT_H

@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QDebug>
 #include <QPushButton>
+#include <QTextDocument>
 #include "fileview.h"
 
 class QPaintEvent;

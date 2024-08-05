@@ -189,11 +189,15 @@ void QNChatMessage::paintEvent(QPaintEvent *event)
         penText.setColor(QColor(51,51,51));
         painter.setPen(penText);
         QTextOption option(Qt::AlignLeft | Qt::AlignVCenter);
-        option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+        option.setWrapMode(QTextOption::WordWrap);
         painter.setFont(this->font());
 
-
-        if(!is_image)painter.drawText(m_textLeftRect, m_msg,option);
+        if(!is_image){
+            QTextDocument doc;
+            doc.setHtml(m_msg);  // 将富文本文本设置为 HTML 格式
+            // 绘制文档
+            painter.drawText(m_textLeftRect, doc.toPlainText());
+        }
         else{
             if(!m_msg.endsWith(".jpg")
              &&!m_msg.endsWith(".png")
@@ -232,7 +236,12 @@ void QNChatMessage::paintEvent(QPaintEvent *event)
         painter.setPen(penText);
         QTextOption option(Qt::AlignRight | Qt::AlignVCenter);
         option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
-        if(!is_image)painter.drawText(m_textRightRect, m_msg,option);
+        if(!is_image){
+            QTextDocument doc;
+            doc.setHtml(m_msg);  // 将富文本文本设置为 HTML 格式
+            // 绘制文档
+            painter.drawText(m_textRightRect, doc.toPlainText());
+        }
         else{
             if(!m_msg.endsWith(".jpg")
              &&!m_msg.endsWith(".png")

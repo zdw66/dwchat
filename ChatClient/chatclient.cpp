@@ -6,6 +6,19 @@ ChatClient::ChatClient(QWidget *parent)
     , ui(new Ui::ChatClient)
 {
     ui->setupUi(this);
+    check=true;
+    QString groupId = "1810541336101667371";
+    QString apiKey = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJHcm91cE5hbWUiOiLlkajlpKfkvJ8iLCJVc2VyTmFtZSI6IuWRqOWkp-S8nyIsIkFjY291bnQiOiIiLCJTdWJqZWN0SUQiOiIxODEwNTQxMzM2MTEwMDU1OTc5IiwiUGhvbmUiOiIxNTMzMzQzNzIwNCIsIkdyb3VwSUQiOiIxODEwNTQxMzM2MTAxNjY3MzcxIiwiUGFnZU5hbWUiOiIiLCJNYWlsIjoiIiwiQ3JlYXRlVGltZSI6IjIwMjQtMDgtMDEgMjE6MDc6NDIiLCJpc3MiOiJtaW5pbWF4In0.VbEugvYEii4W70zg8dBrFhnd9o9WPUSVD4v5W5zSRnNsG7VqztHwwe9gR-CUo5u8OySTWNZkq1iUADL2l0P0HVl7pi3mrXD29m_KhTXlYmoWDG6MNENZAP4pHGX_F6pf-cditImuZipsbv1SDkXjyMKBP6JHUZt3tzjsxw3wGTWMXp0XJwPhzNFBRAMU9H0QGONtToW0HI3oqUcep3FUua3adUVEi5FnWFRuLncG9WWltJF_538p2cNzM8iYq8IJYGTI2nM8DrJZq0mX9XLJQ6_MUay9H475CqB2TjlL7FycAQM44dXGvYWfFXaHaP-cnh5x1kZ9HrV0TrUIK4SbmQ"; // 请替换为您的 API 密钥
+    chatbot = new ChatBOT(groupId, apiKey);
+    QObject::connect(chatbot,&ChatBOT::ResultOk,[&](){
+        QString Messages = chatbot->htmlText;
+        QString time = QString::number(QDateTime::currentDateTime().toTime_t()); //时间戳
+        QNChatMessage* messageW = new QNChatMessage(ui->listWidget->parentWidget());
+        QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
+        dealMessage(messageW, item, Messages, time, QNChatMessage::User_She);
+        ui->pushButton_7->setEnabled(true);
+        ui->pushButton_7->setStyleSheet("background-color: rgb(51, 209, 122);");
+    });
     MyEmijo = new Emijo();
     myFile = new MyFileInfo(this);
     ui->progressBar->setValue(0);
@@ -239,6 +252,7 @@ void ChatClient::fileInfoRead(QMap<QString, QVariant> map)
     }
     //文件信息获取完成，接着获取文件数据
     QByteArray senddata=(QString(R"({
+
                              "MessageType":1,
                              "sender":"root2",
                              "user":"root1",
@@ -556,4 +570,22 @@ void ChatClient::on_pushButton_6_clicked()
         MyEmijo->hide();
         disconnect(MyEmijo,&Emijo::getEmijo,this,nullptr);
     });
+}
+
+
+/*AI TEST*/
+void ChatClient::on_pushButton_7_clicked()
+{
+    QString messages = ui->textEdit->toPlainText();
+    ui->textEdit->setText("");
+    if(messages=="")return;
+    QString time = QString::number(QDateTime::currentDateTime().toTime_t()); //时间戳
+    QNChatMessage* messageW = new QNChatMessage(ui->listWidget->parentWidget());
+    QListWidgetItem* item = new QListWidgetItem(ui->listWidget);
+    dealMessage(messageW, item, messages , time, QNChatMessage::User_Me);
+    messageW->setTextSuccess();
+    ui->pushButton_7->setStyleSheet("background-color: rgb(237, 51, 59);");
+    qDebug()<<messages;
+    chatbot->sendMessage(messages);
+    ui->pushButton_7->setEnabled(false);
 }

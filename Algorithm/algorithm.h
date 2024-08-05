@@ -11,6 +11,7 @@
 #include "chatmessage/qnchatmessage.h"
 #include "emijo.h"
 #include "wxlogin.h"
+#include "chatbot.h"
 class ALGORITHM_EXPORT Algorithm
 {
 public:
